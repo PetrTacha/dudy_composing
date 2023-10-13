@@ -28,6 +28,7 @@
             "id": "dmychaciMechy",
             "name": "Dmýchací měchy",
             "parts": [
+                "assets/dmychaci_mechy/dm1"
             ]
         },
         {

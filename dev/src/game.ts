@@ -179,11 +179,13 @@ export class PipeGame {
                 { x: 200, y: 200 }
             );
 
+            piece.mesh.scale.set(200,200,1);
             // this.pipes.get(pipe_id).addPart(piece);
             this.movables.push(piece.mesh);
             this.scene.add(piece.mesh);
             this.selected = piece.mesh;
             this.updateZIndex();
+            // this.selected.scale.set(50,50,1);
         });
 
     }
