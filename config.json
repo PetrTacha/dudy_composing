@@ -1,0 +1,74 @@
+{
+    "backgroundImageUrl": "assets/bg.png",
+    "winImg": "assets/button.png",
+    "icons": [
+        "assets/icons/toolPlus.svg",
+        "assets/icons/toolMinus.svg",
+        "assets/icons/toolRotateRight.svg",
+        "assets/icons/toolRotateLeft.svg",
+        "assets/icons/toolTrash.svg"
+    ],
+    "pipeGroups": [
+        {
+            "id": "borduny",
+            "name": "Borduny",
+            "parts": [
+                "assets/borduny/b1",
+                "assets/borduny/b2"
+            ]
+        },
+        {
+            "id": "dechovaTrubice",
+            "name": "Dechová trubice",
+            "parts": [
+                "assets/dechove_trubice/d1"
+            ]
+        },
+        {
+            "id": "dmychaciMechy",
+            "name": "Dmýchací měchy",
+            "parts": [
+            ]
+        },
+        {
+            "id": "hlavy",
+            "name": "Hlavy",
+            "parts": [
+                "assets/hlavy/h1",
+                "assets/hlavy/h2",
+                "assets/hlavy/h3",
+                "assets/hlavy/h4"
+            ]
+        },
+        {
+            "id": "melodickePistaly",
+            "name": "Melodické píšťaly",
+            "parts": [
+                "assets/melodicke_pistaly/p1",
+                "assets/melodicke_pistaly/p2",
+                "assets/melodicke_pistaly/p3",
+                "assets/melodicke_pistaly/p4",
+                "assets/melodicke_pistaly/p5",
+                "assets/melodicke_pistaly/p1",
+                "assets/melodicke_pistaly/p2",
+                "assets/melodicke_pistaly/p3",
+                "assets/melodicke_pistaly/p4",
+                "assets/melodicke_pistaly/p5"
+            ]
+        },
+        {
+            "id": "zasobniMechy",
+            "name": "Zásobní měchy",
+            "parts": [
+                "assets/zasobni_mech/mech1",
+                "assets/zasobni_mech/mech2",
+                "assets/zasobni_mech/mech3",
+                "assets/zasobni_mech/mech4",
+                "assets/zasobni_mech/mech5",
+                "assets/zasobni_mech/mech6",
+                "assets/zasobni_mech/mech7",
+                "assets/zasobni_mech/mech8"
+            ]
+        }
+    ]
+}
