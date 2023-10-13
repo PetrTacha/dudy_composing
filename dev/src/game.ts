@@ -6,7 +6,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 function resizeCanvas(canvas: HTMLCanvasElement) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    console.log("Canvas size" + canvas.width + " " + canvas.height);
 }
 
 function pad(n: number, minWidth: number) {
@@ -26,9 +25,11 @@ export class PipeGame {
     finished = false;
     startTime = 0;
     selected: THREE.Mesh | undefined;
-    scaleFactor = 5;
     firstLoad = true;
     currentZIndex = 1;
+    scaleFactor = 60;
+    maxScale = 680;
+    minScale = 20;
 
     constructor(config: GameConfig, canvas: HTMLCanvasElement) {
         // canvas.width = 1919;
@@ -78,7 +79,6 @@ export class PipeGame {
     restart() {
 
         for (const part of this.movables) {
-            console.log("-> part", part);
             this.scene.remove(part);
         }
 
@@ -162,13 +162,10 @@ export class PipeGame {
     // }
 
     addModelIntoScene(part: string) {
-        console.log("-> called");
         this.model_loader.load(`${part}.glb`, (gltf) => {
-            console.log("-> INSIDE");
             const model = gltf.scene.children[0] as THREE.Mesh;
             const mat = model.material as THREE.MeshBasicMaterial;
             mat.transparent = true;
-            console.log("-> this.canvas.width/2, this.canvas.height/2", this.canvas.width / 2, this.canvas.height / 2);
             if (mat.map)
                 mat.map.encoding = THREE.LinearEncoding;
 
@@ -179,7 +176,7 @@ export class PipeGame {
                 { x: 200, y: 200 }
             );
 
-            piece.mesh.scale.set(200,200,1);
+            piece.mesh.scale.set(200, 200, 1);
             // this.pipes.get(pipe_id).addPart(piece);
             this.movables.push(piece.mesh);
             this.scene.add(piece.mesh);
@@ -209,9 +206,12 @@ export class PipeGame {
         <div class="tool" data-tool="rotateLeft">
             <img class="tool-icon" src="${this.config.icons[3]}" alt="rotateLeft">
         </div>
+        <div class="tool" data-tool="mirror">
+            <img class="tool-icon" src="${this.config.icons[4]}" alt="mirror">
+        </div>
     </div>
     <div class="tool trash-can" data-tool="reset">
-        <img class="tool-icon" src="${this.config.icons[4]}" alt="reset">
+        <img class="tool-icon" src="${this.config.icons[5]}" alt="reset">
     </div>`;
 
         /* Main menu is visible no need to restart game */
@@ -220,7 +220,6 @@ export class PipeGame {
         for (let i = 0; i < toolsBt.length; i++) {
             // @ts-ignore
             toolsBt[i].onclick = (e: any) => {
-                console.log("-> e", e.target.dataset.tool);
                 switch (e.target.dataset.tool) {
                     case "plus":
                         this.toolPlusEvent();
@@ -233,6 +232,9 @@ export class PipeGame {
                         break;
                     case "rotateRight":
                         this.toolRotateEvent(-1);
+                        break;
+                    case "mirror":
+                        this.mirrorEvent();
                         break;
                     case "reset":
                         this.deleteSelected();
@@ -277,10 +279,14 @@ export class PipeGame {
 
     private toolPlusEvent() {
         if (!this.selected) return;
+        let mirrored = 1;
+        if (this.selected.scale.x < 0) mirrored = -1
+        if ((this.selected.scale.x + this.scaleFactor) * mirrored >= this.maxScale || this.selected.scale.y + this.scaleFactor >= this.maxScale) return;
         const boundingBox = new THREE.Box3().setFromObject(this.selected);
         const center = new THREE.Vector3();
         boundingBox.getCenter(center);
-        this.selected.scale.set(this.selected.scale.x + this.scaleFactor, this.selected.scale.y + this.scaleFactor, this.selected.scale.z);
+
+        this.selected.scale.set(this.selected.scale.x + this.scaleFactor * mirrored, this.selected.scale.y + this.scaleFactor, this.selected.scale.z);
         const newBoundingBox = new THREE.Box3().setFromObject(this.selected);
         const newCenter = new THREE.Vector3();
         newBoundingBox.getCenter(newCenter);
@@ -290,10 +296,13 @@ export class PipeGame {
 
     private toolMinusEvent() {
         if (!this.selected) return;
+        let mirrored = 1;
+        if (this.selected.scale.x < 0) mirrored = -1
+        if ((this.selected.scale.x - this.scaleFactor) * mirrored <= this.minScale || this.selected.scale.y - this.scaleFactor <= this.minScale) return;
         const boundingBox = new THREE.Box3().setFromObject(this.selected);
         const center = new THREE.Vector3();
         boundingBox.getCenter(center);
-        this.selected.scale.set(this.selected.scale.x - this.scaleFactor, this.selected.scale.y - this.scaleFactor, this.selected.scale.z);
+        this.selected.scale.set(this.selected.scale.x - this.scaleFactor * mirrored, this.selected.scale.y - this.scaleFactor, this.selected.scale.z);
         const newBoundingBox = new THREE.Box3().setFromObject(this.selected);
         const newCenter = new THREE.Vector3();
         newBoundingBox.getCenter(newCenter);
@@ -318,8 +327,19 @@ export class PipeGame {
         newBoundingBox.getCenter(newCenter);
         const translation = center.clone().sub(newCenter);
         this.selected.position.add(translation);
+    }
 
-
+    private mirrorEvent() {
+        if (!this.selected) return;
+        const boundingBox = new THREE.Box3().setFromObject(this.selected);
+        const center = new THREE.Vector3();
+        boundingBox.getCenter(center);
+        this.selected.scale.set(this.selected.scale.x * -1, this.selected.scale.y, this.selected.scale.z);
+        const newBoundingBox = new THREE.Box3().setFromObject(this.selected);
+        const newCenter = new THREE.Vector3();
+        newBoundingBox.getCenter(newCenter);
+        const translation = center.clone().sub(newCenter);
+        this.selected.position.add(translation);
     }
 
     renderSelectModelMenu() {

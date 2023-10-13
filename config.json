@@ -6,6 +6,7 @@
         "assets/icons/toolMinus.svg",
         "assets/icons/toolRotateRight.svg",
         "assets/icons/toolRotateLeft.svg",
+        "assets/icons/toolMirror.svg",
         "assets/icons/toolTrash.svg"
     ],
     "pipeGroups": [
