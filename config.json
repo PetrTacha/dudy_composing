@@ -37,7 +37,9 @@
             "id": "dmychaciMechy",
             "name": "Dmýchací měchy",
             "parts": [
-                "assets/dmychaci_mechy/dm1"
+                "assets/dmychaci_mechy/dm1",
+                "assets/dmychaci_mechy/dm2",
+                "assets/dmychaci_mechy/dm3"
             ]
         },
         {
@@ -47,7 +49,8 @@
                 "assets/hlavy/h1",
                 "assets/hlavy/h2",
                 "assets/hlavy/h3",
-                "assets/hlavy/h4"
+                "assets/hlavy/h4",
+                "assets/hlavy/h5"
             ]
         },
         {
