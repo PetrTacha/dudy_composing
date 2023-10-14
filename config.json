@@ -17,14 +17,20 @@
                 "assets/borduny/b1",
                 "assets/borduny/b2",
                 "assets/borduny/b3",
-                "assets/borduny/b3a"
+                "assets/borduny/b4",
+                "assets/borduny/b5",
+                "assets/borduny/b6",
+                "assets/borduny/b7"
             ]
         },
         {
             "id": "dechovaTrubice",
             "name": "Dechová trubice",
             "parts": [
-                "assets/dechove_trubice/d1"
+                "assets/dechove_trubice/d1",
+                "assets/dechove_trubice/d2",
+                "assets/dechove_trubice/d3",
+                "assets/dechove_trubice/d4"
             ]
         },
         {
