@@ -36,13 +36,11 @@ export class Part {
     // id: number;
     mesh: THREE.Mesh;
     // layer: number;
-    size: { x: number, y: number };
     position: THREE.Vector3 = new THREE.Vector3();
     snapped = false;
 
 
-    constructor(piece: { x: number, y: number}, mesh: THREE.Mesh, size: { x: number, y: number }) {
-        this.size = size;
+    constructor(piece: { x: number, y: number}, mesh: THREE.Mesh, size: number) {
         this.mesh = mesh;
         this.mesh.userData.piece = this;
         // this.layer = config.layer;
@@ -50,6 +48,8 @@ export class Part {
         this.position.y = piece.y
         this.mesh.position.x = piece.x;
         this.mesh.position.y = piece.y;
+        this.mesh.scale.x = mesh.scale.x * size;
+        this.mesh.scale.y = mesh.scale.y * size;
         // this.id = config.id;
     }
 

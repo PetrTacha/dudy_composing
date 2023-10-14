@@ -15,7 +15,9 @@
             "name": "Borduny",
             "parts": [
                 "assets/borduny/b1",
-                "assets/borduny/b2"
+                "assets/borduny/b2",
+                "assets/borduny/b3",
+                "assets/borduny/b3a"
             ]
         },
         {

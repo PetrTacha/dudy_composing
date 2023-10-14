@@ -27,9 +27,9 @@ export class PipeGame {
     selected: THREE.Mesh | undefined;
     firstLoad = true;
     currentZIndex = 1;
-    scaleFactor = 60;
-    maxScale = 680;
-    minScale = 20;
+    scaleFactor = 1.5;
+    maxScale = 2000;
+    minScale = 50;
 
     constructor(config: GameConfig, canvas: HTMLCanvasElement) {
         // canvas.width = 1919;
@@ -169,14 +169,11 @@ export class PipeGame {
             if (mat.map)
                 mat.map.encoding = THREE.LinearEncoding;
 
-            model.scale.set(PIPE_SCALE, PIPE_SCALE, 1);
             const piece = new Part(
                 { x: 0, y: 0 },
                 model,
-                { x: 200, y: 200 }
+                100
             );
-
-            piece.mesh.scale.set(200, 200, 1);
             // this.pipes.get(pipe_id).addPart(piece);
             this.movables.push(piece.mesh);
             this.scene.add(piece.mesh);
@@ -281,12 +278,12 @@ export class PipeGame {
         if (!this.selected) return;
         let mirrored = 1;
         if (this.selected.scale.x < 0) mirrored = -1
-        if ((this.selected.scale.x + this.scaleFactor) * mirrored >= this.maxScale || this.selected.scale.y + this.scaleFactor >= this.maxScale) return;
+        if ((this.selected.scale.x * this.scaleFactor) * mirrored >= this.maxScale || this.selected.scale.y * this.scaleFactor >= this.maxScale) return;
         const boundingBox = new THREE.Box3().setFromObject(this.selected);
         const center = new THREE.Vector3();
         boundingBox.getCenter(center);
 
-        this.selected.scale.set(this.selected.scale.x + this.scaleFactor * mirrored, this.selected.scale.y + this.scaleFactor, this.selected.scale.z);
+        this.selected.scale.set(this.selected.scale.x * this.scaleFactor, this.selected.scale.y * this.scaleFactor, this.selected.scale.z);
         const newBoundingBox = new THREE.Box3().setFromObject(this.selected);
         const newCenter = new THREE.Vector3();
         newBoundingBox.getCenter(newCenter);
@@ -298,11 +295,11 @@ export class PipeGame {
         if (!this.selected) return;
         let mirrored = 1;
         if (this.selected.scale.x < 0) mirrored = -1
-        if ((this.selected.scale.x - this.scaleFactor) * mirrored <= this.minScale || this.selected.scale.y - this.scaleFactor <= this.minScale) return;
+        if ((this.selected.scale.x / this.scaleFactor) * mirrored <= this.minScale || this.selected.scale.y / this.scaleFactor <= this.minScale) return;
         const boundingBox = new THREE.Box3().setFromObject(this.selected);
         const center = new THREE.Vector3();
         boundingBox.getCenter(center);
-        this.selected.scale.set(this.selected.scale.x - this.scaleFactor * mirrored, this.selected.scale.y - this.scaleFactor, this.selected.scale.z);
+        this.selected.scale.set((this.selected.scale.x / this.scaleFactor), this.selected.scale.y / this.scaleFactor, this.selected.scale.z);
         const newBoundingBox = new THREE.Box3().setFromObject(this.selected);
         const newCenter = new THREE.Vector3();
         newBoundingBox.getCenter(newCenter);
