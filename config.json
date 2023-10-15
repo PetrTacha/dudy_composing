@@ -78,14 +78,15 @@
             "id": "zasobniMechy",
             "name": "Zásobní měchy",
             "parts": [
-                "assets/zasobni_mech/mech1",
-                "assets/zasobni_mech/mech2",
-                "assets/zasobni_mech/mech3",
-                "assets/zasobni_mech/mech4",
-                "assets/zasobni_mech/mech5",
-                "assets/zasobni_mech/mech6",
-                "assets/zasobni_mech/mech7",
-                "assets/zasobni_mech/mech8"
+                "assets/zasobni_mech/zm1",
+                "assets/zasobni_mech/zm2",
+                "assets/zasobni_mech/zm3",
+                "assets/zasobni_mech/zm4",
+                "assets/zasobni_mech/zm5",
+                "assets/zasobni_mech/zm6",
+                "assets/zasobni_mech/zm7",
+                "assets/zasobni_mech/zm8",
+                "assets/zasobni_mech/zm9"
             ]
         }
     ]
