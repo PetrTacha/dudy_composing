@@ -1,6 +1,9 @@
 {
     "backgroundImageUrl": "assets/bg.png",
     "winImg": "assets/button.png",
+    "scaleFactor": 1.5,
+    "maxScale": 2000,
+    "minScale": 50,
     "icons": [
         "assets/icons/toolPlus.svg",
         "assets/icons/toolMinus.svg",

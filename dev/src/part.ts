@@ -1,19 +1,8 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-
 
 export const PIPE_SCALE = 15;
 export const PIPE_POSITION_LEFT = {x: -800, y: -450}
 export const PIPE_POSITION_RIGHT = {x: +500, y:-450}
-
-
-
-
-type PartConfig = {
-    id: number,
-    layer: number,
-    part: string
-}
 
 type PipeConfig = {
     id: number,
@@ -28,7 +17,10 @@ export type GameConfig = {
     backgroundImageUrl: string,
     winImg: string;
     pipeGroups: PipeConfig[]
-    icons: string[]
+    icons: string[],
+    scaleFactor: number,
+    maxScale: number,
+    minScale: number
 }
 
 

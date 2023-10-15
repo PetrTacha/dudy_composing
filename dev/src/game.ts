@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
-import { GameConfig, Part, PIPE_SCALE } from './parts';
+import { GameConfig, Part } from './part';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 function resizeCanvas(canvas: HTMLCanvasElement) {
@@ -27,9 +27,9 @@ export class PipeGame {
     selected: THREE.Mesh | undefined;
     firstLoad = true;
     currentZIndex = 1;
-    scaleFactor = 1.5;
-    maxScale = 2000;
-    minScale = 50;
+    scaleFactor = 1.5; // scale factor for (+) and (-)
+    maxScale = 2000; // maximal scale for (+)
+    minScale = 50; // minimal scale for (-)
 
     constructor(config: GameConfig, canvas: HTMLCanvasElement) {
         // canvas.width = 1919;
@@ -45,11 +45,14 @@ export class PipeGame {
             1,
             1000
         );
-        this.camera.position.z = 1000;
+        this.camera.position.z = 1000; // Default camera Z position, check updateZIndex() form more info
         this.renderer = new THREE.WebGLRenderer({ canvas: canvas });
         this.renderer.setSize(canvas.width, canvas.height);
         this.loader = new THREE.TextureLoader();
         this.config = config;
+        this.scaleFactor = config.scaleFactor || 1.5;
+        this.maxScale = config.maxScale || 2000;
+        this.minScale = config.minScale || 50;
 
         this.renderer.setClearColor(0xffffff, 0);
         // this.renderMenu();
@@ -77,13 +80,11 @@ export class PipeGame {
     }
 
     restart() {
-
+        // Remove all parts
         for (const part of this.movables) {
             this.scene.remove(part);
         }
-
         this.movables = []
-
         this.init();
     }
 
@@ -99,6 +100,11 @@ export class PipeGame {
     }
 
 
+    /**
+     * I have to make sure, that the last item which user select is the most top item, without change of the position of the rest meshes in scene.
+     * The logic is, everytime when user select object, or the object is added to the scene, the global z-index is increased by 1 and the
+     * selected mesh set Z index to the new value of this.currentZIndex
+     * */
     updateZIndex() {
         // I need to move z index of each movable to top on each other, but i have and camera on position z = 1000, so after that I have to reset z index and all movables
         if (this.currentZIndex >= 999) {
@@ -111,7 +117,10 @@ export class PipeGame {
         this.currentZIndex += 1;
     }
 
-
+    /**
+     * Initialize DragControls for meshes
+     * https://threejs.org/docs/#examples/en/controls/DragControls
+     * */
     initDragControls() {
         const dragControls = new DragControls(this.movables, this.camera, this.canvas);
 
@@ -161,6 +170,11 @@ export class PipeGame {
     //     }
     // }
 
+    /**
+     * Render model into scene
+     *
+     * @param {string} part - location of the given object without extension. (extension .glb is added automatically)
+     * */
     addModelIntoScene(part: string) {
         this.model_loader.load(`${part}.glb`, (gltf) => {
             const model = gltf.scene.children[0] as THREE.Mesh;
@@ -174,16 +188,18 @@ export class PipeGame {
                 model,
                 100
             );
-            // this.pipes.get(pipe_id).addPart(piece);
             this.movables.push(piece.mesh);
             this.scene.add(piece.mesh);
             this.selected = piece.mesh;
             this.updateZIndex();
-            // this.selected.scale.set(50,50,1);
         });
 
     }
 
+
+    /**
+     * Render tool menu (+, -, RotateL, RotateR, Mirror, Delete)
+     * */
     renderToolsMenu() {
 
         const root = document.querySelector('.container') as HTMLElement;
@@ -215,8 +231,9 @@ export class PipeGame {
         const toolsBt = canvasToolMenu.querySelectorAll('.tool') as NodeList;
 
         for (let i = 0; i < toolsBt.length; i++) {
-            // @ts-ignore
-            toolsBt[i].onclick = (e: any) => {
+            const button = toolsBt[i] as HTMLElement;
+
+            button.onclick = (e: any) => {
                 switch (e.target.dataset.tool) {
                     case "plus":
                         this.toolPlusEvent();
@@ -244,6 +261,9 @@ export class PipeGame {
         root.appendChild(canvasToolMenu);
     }
 
+    /**
+     * Delete selected mesh
+     * */
     private deleteSelected() {
 
         if (this.selected) {
@@ -274,10 +294,15 @@ export class PipeGame {
     //     return { x: x, y: y };
     // }
 
+    /**
+     * Enlarge selected mesh
+     * */
     private toolPlusEvent() {
         if (!this.selected) return;
+        // Check if is mirrored
         let mirrored = 1;
         if (this.selected.scale.x < 0) mirrored = -1
+        // If scale will hit this.maxScale return, don't shrink
         if ((this.selected.scale.x * this.scaleFactor) * mirrored >= this.maxScale || this.selected.scale.y * this.scaleFactor >= this.maxScale) return;
         const boundingBox = new THREE.Box3().setFromObject(this.selected);
         const center = new THREE.Vector3();
@@ -291,10 +316,15 @@ export class PipeGame {
         this.selected.position.add(translation);
     }
 
+    /**
+     * Shrink selected mesh
+     * */
     private toolMinusEvent() {
         if (!this.selected) return;
+        // Check if is mirrored
         let mirrored = 1;
         if (this.selected.scale.x < 0) mirrored = -1
+        // If scale will hit this.minScale return, don't shrink
         if ((this.selected.scale.x / this.scaleFactor) * mirrored <= this.minScale || this.selected.scale.y / this.scaleFactor <= this.minScale) return;
         const boundingBox = new THREE.Box3().setFromObject(this.selected);
         const center = new THREE.Vector3();
@@ -307,7 +337,13 @@ export class PipeGame {
         this.selected.position.add(translation);
     }
 
-    private toolRotateEvent(direction: number) {
+    /**
+     * Rotate selected mesh
+     *
+     * @param {string} direction - Direction of rotate (1 or -1)
+     *
+     * */
+    private toolRotateEvent(direction: 1 | -1) {
 
         if (!this.selected) return;
         const angleInRadians = THREE.MathUtils.degToRad(direction * 15);
@@ -326,6 +362,9 @@ export class PipeGame {
         this.selected.position.add(translation);
     }
 
+    /**
+     * Mirror selected mesh
+     * */
     private mirrorEvent() {
         if (!this.selected) return;
         const boundingBox = new THREE.Box3().setFromObject(this.selected);
@@ -339,6 +378,9 @@ export class PipeGame {
         this.selected.position.add(translation);
     }
 
+    /**
+     * Render side panel with pictures and tab menu
+     * */
     renderSelectModelMenu() {
         let menuRef = document.querySelector("#select-menu");
         let selectModel = menuRef?.querySelector(".select-model");
@@ -355,7 +397,7 @@ export class PipeGame {
             const modelSelectGroup = document.createElement('div');
             modelSelectGroup.classList.add("select-model-group");
             modelSelectGroup.dataset.groupid = `list-${group.id}`
-            modelSelectGroup.classList.add("hidden"); // TODO logic
+            modelSelectGroup.classList.add("hidden");
 
             group.parts.forEach(part => {
                 if (!menuRef) return;
@@ -375,14 +417,14 @@ export class PipeGame {
     }
 
     addEventListenersUI() {
+        // When click on image in menu, add model to scene
         document.querySelectorAll(".insert-image").forEach(selectImage => {
-            //TODO to touchstart
             selectImage.addEventListener("click", e => {
                 const target = e.target as HTMLButtonElement;
                 if (target?.dataset.model) this.addModelIntoScene(target.dataset.model);
             })
         })
-
+        // Change selected group of pipe parts
         document.querySelectorAll(".menu-tab").forEach(menuTab => {
                 menuTab.addEventListener("click", e => {
                     document.querySelectorAll(".menu-tab").forEach(menuTab => {
@@ -406,7 +448,7 @@ export class PipeGame {
         )
 
 
-        //RESET ALL BUTTON
+        // Remove all pieces from scene, restart
         document.querySelector("#restart")?.addEventListener("click", () => {
             this.restart()
         })
